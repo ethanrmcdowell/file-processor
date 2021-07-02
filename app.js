@@ -19,7 +19,17 @@ const fs = require('fs');
 const directoryList = [];
 const md5sum = crypto.createHash('md5');
 
-const init = () => {
+const initPrompt = {
+  type: 'input',
+  name: 'target',
+  message: 'Enter required information:',
+};
+
+const init = async () => {
+  await inquirer.prompt(initPrompt).then(initRes => {
+    const userRes = initRes.target;
+    console.log('YOU ENTERED: ' + userRes);
+  });
   try {
     fs.readdirSync('./Target/').forEach((file, error) => {
       const boolDir = fs.lstatSync('./Target/' + file).isDirectory();
