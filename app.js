@@ -1,22 +1,27 @@
 const inquirer = require('inquirer');
+const crypto = require('crypto');
 const fs = require('fs');
-const FileType = require('file-type');
 
 const init = () => {
-  fs.readdirSync('./').forEach(async file => {
-    if (file === '.DS_Store' || file === 'app.js') {
-      return;
-    } else {
-      const thisFile = await FileType.fromFile(file);
-      console.log(thisFile.ext);
+  fs.readdirSync('./Target/').forEach(async (file, error) => {
+    const boolDir = await fs.lstatSync('./Target/' + file).isDirectory();
+    const boolFile = await fs.lstatSync('./Target/' + file).isFile();
+    if (boolFile) {
+      const fileHex = await fs
+        .readFileSync('./Target/' + file)
+        .toString('hex')
+        .slice(0, 9);
+      if (fileHex === '255044462') {
+        console.log('**PDF: ' + file);
+      }
     }
   });
 };
 
 // const init = async () => {
-//   console.log(await fs.readdirSync(__dirname));
+//   console.log(
+// await fs.readFileSync('./Letter.pdf').toString('hex').slice(0, 9)
+//   );
 // };
-
-// console.log(await FileType.fromFile(file));
 
 init();
