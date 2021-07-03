@@ -14,6 +14,10 @@ const FileInfo = require('./lib/FileInfo');
 
 const directoryList = [];
 const fileList = [];
+// subdirFlag should be set false by defult, set true for testing
+let subdirFlag = true;
+let targetPath = '/Users/ethanmcdowell/Projects/file-scanner/Target/';
+let originalTarget = '';
 
 const initPrompt = {
   type: 'input',
@@ -26,23 +30,28 @@ const init = () => {
 };
 
 const userInput = async () => {
-  await inquirer.prompt(initPrompt).then(async initRes => {
-    const userRes = initRes.target;
-    console.log(userRes.split(/[ ,]+/));
-  });
+  // await inquirer.prompt(initPrompt).then(async initRes => {
+  //   const userRes = initRes.target;
+  //   const inputLength = userRes.split(/[ ,]+/).length;
+  //   const targetDir = userRes.split(/[ ,]+/)[0];
+  //   const outputPath = userRes.split(/[ ,]+/)[1];
+  //   if (inputLength === 3) {
+  //     subdirFlag = true;
+  //   }
+  // });
   scanFiles();
 };
 
 const scanFiles = async () => {
   try {
-    await fs.readdirSync('./Target/').forEach((file, error) => {
-      const boolDir = fs.lstatSync('./Target/' + file).isDirectory();
-      const boolFile = fs.lstatSync('./Target/' + file).isFile();
+    await fs.readdirSync(targetPath).forEach((file, error) => {
+      const boolDir = fs.lstatSync(targetPath + file).isDirectory();
+      const boolFile = fs.lstatSync(targetPath + file).isFile();
       if (boolDir) {
         handleDir(file);
       } else if (boolFile) {
         const fileHex = fs
-          .readFileSync('./Target/' + file)
+          .readFileSync(targetPath + file)
           .toString('hex')
           .slice(0, 9);
         if (fileHex === '255044462') handlePdf(file);
@@ -52,27 +61,32 @@ const scanFiles = async () => {
   } catch (err) {
     console.log(err);
   } finally {
-    createCsv();
+    if (subdirFlag) {
+      console.log('SUBDIRECTORY FLAG TURNED ON, SCANNING SUBDIRECTORIES');
+      handleSubdir();
+    } else if (!subdirFlag) {
+      console.log('CREATING YOUR FILE, PLEASE BE PATIENT :)');
+      createCsv();
+    }
   }
 };
 
 const handlePdf = async file => {
-  const thisFile = await fs.readFileSync('./Target/' + file);
+  const thisFile = await fs.readFileSync(targetPath + file);
   const hash = crypto.createHash('md5').update(thisFile).digest('hex');
-  const newFileInfo = new FileInfo('./Target/' + file, '.pdf', hash);
+  const newFileInfo = new FileInfo(targetPath + file, '.pdf', hash);
   fileList.push(newFileInfo);
 };
 
 const handleJpg = async file => {
-  const thisFile = await fs.readFileSync('./Target/' + file);
+  const thisFile = await fs.readFileSync(targetPath + file);
   const hash = crypto.createHash('md5').update(thisFile).digest('hex');
-  const newFileInfo = new FileInfo('./Target/' + file, '.jpg', hash);
+  const newFileInfo = new FileInfo(targetPath + file, '.jpg', hash);
   fileList.push(newFileInfo);
 };
 
 const createCsv = () => {
-  console.log(__dirname);
-  console.log(fs.readdirSync('/users/ethanmcdowell/Projects'));
+  console.log('CREATE CSV FUNCTION ~~');
   // for (let i = 0; i < fileList.length; i++) {
   //   console.log(
   //     fileList[i].path + ',' + fileList[i].type + ',' + fileList[i].md5
@@ -81,8 +95,27 @@ const createCsv = () => {
 };
 
 const handleDir = file => {
-  // directoryList.push(file);
-  // console.log('DIR: ' + file + '/');
+  directoryList.push(file);
+};
+
+const handleSubdir = () => {
+  if (directoryList.length === 0) {
+    console.log('THERE ARE NO SUBDIRECTORIES!');
+  } else {
+    try {
+      originalTarget = targetPath;
+      directoryList.forEach(async directory => {
+        targetPath = originalTarget + directory;
+        await subdirScan();
+      });
+    } catch (err) {
+      console.log(err);
+    }
+  }
+};
+
+const subdirScan = () => {
+  console.log(targetPath);
 };
 
 init();
