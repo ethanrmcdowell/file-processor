@@ -2,24 +2,18 @@ const inquirer = require('inquirer');
 const crypto = require('crypto');
 const fs = require('fs');
 
+const FileInfo = require('./lib/FileInfo');
+
 // ----------------------------------------------
 //           TO DO & NOTES:
 // ----------------------------------------------
-// figure out what to do with directories:
-// UPDATE: folder names being pushed to directoryList array
+// Take fileList objects and write into csv file
 // ----------------------------------------------
-// implement inquirer for command line UI
-// UPDATE: asks user for entry upon starting app.js
-// ----------------------------------------------
-// md5 hash of pdf and jpg files
-// UPDATE: will detect pdf/jpg files and print hash
-// ----------------------------------------------
-// combine into object -> csv file
-// UPDATE: created class for fileinfo objects
+// Separate input into path, file type, and md5
 // ----------------------------------------------
 
 const directoryList = [];
-// const md5sum = crypto.createHash('md5');
+const fileList = [];
 
 const initPrompt = {
   type: 'input',
@@ -27,20 +21,21 @@ const initPrompt = {
   message: 'Enter required information:',
 };
 
-const init = async () => {
-  userInput().then(scanFiles());
+const init = () => {
+  userInput();
 };
 
 const userInput = async () => {
   await inquirer.prompt(initPrompt).then(async initRes => {
     const userRes = initRes.target;
-    console.log('YOU ENTERED: ' + userRes);
+    console.log(userRes.split(/[ ,]+/));
   });
+  scanFiles();
 };
 
-const scanFiles = () => {
+const scanFiles = async () => {
   try {
-    fs.readdirSync('./Target/').forEach((file, error) => {
+    await fs.readdirSync('./Target/').forEach((file, error) => {
       const boolDir = fs.lstatSync('./Target/' + file).isDirectory();
       const boolFile = fs.lstatSync('./Target/' + file).isFile();
       if (boolDir) {
@@ -57,20 +52,32 @@ const scanFiles = () => {
   } catch (err) {
     console.log(err);
   } finally {
-    // console.log('---- FIN ----');
-    // console.log('DIRECTORIES: ' + directoryList);
+    createCsv();
   }
 };
 
 const handlePdf = async file => {
   const thisFile = await fs.readFileSync('./Target/' + file);
   const hash = crypto.createHash('md5').update(thisFile).digest('hex');
-  console.log(file + ' / MD5 Hash: ' + hash);
-  // console.log('PDF: ' + file);
+  const newFileInfo = new FileInfo('./Target/' + file, '.pdf', hash);
+  fileList.push(newFileInfo);
 };
 
-const handleJpg = file => {
-  // console.log('JPG: ' + file);
+const handleJpg = async file => {
+  const thisFile = await fs.readFileSync('./Target/' + file);
+  const hash = crypto.createHash('md5').update(thisFile).digest('hex');
+  const newFileInfo = new FileInfo('./Target/' + file, '.jpg', hash);
+  fileList.push(newFileInfo);
+};
+
+const createCsv = () => {
+  console.log(__dirname);
+  console.log(fs.readdirSync('/users/ethanmcdowell/Projects'));
+  // for (let i = 0; i < fileList.length; i++) {
+  //   console.log(
+  //     fileList[i].path + ',' + fileList[i].type + ',' + fileList[i].md5
+  //   );
+  // }
 };
 
 const handleDir = file => {
