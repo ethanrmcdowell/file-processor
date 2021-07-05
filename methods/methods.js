@@ -76,7 +76,7 @@ const testWrite = async testFiles => {
     });
   } finally {
     try {
-      await fs.wrieFile('./test/test.csv', csvText, 'utf8', err => {
+      await fs.writeFile('./test/test.csv', csvText, 'utf8', err => {
         if (err) {
           console.log(err);
         }
