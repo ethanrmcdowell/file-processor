@@ -1,14 +1,6 @@
 const inquirer = require('inquirer');
 const fs = require('fs');
 
-// --------------------------------------------------
-//                  TO DO / NOTES:
-// - Add better logic for subdir flag.
-// - Add logic for ensuring target directory entered
-//    by user has / at the end of directory name
-// - Map user input to target and output pathing
-// --------------------------------------------------
-
 const methods = require('./methods/methods.js');
 
 let subdirFlag = false;
@@ -58,5 +50,3 @@ const userInput = async () => {
 };
 
 init();
-
-// /Users/ethanmcdowell/Projects/file-scanner/Target /Users/ethanmcdowell/Projects/file-scanner/Output/output.csv r
