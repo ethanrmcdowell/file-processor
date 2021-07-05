@@ -1,7 +1,9 @@
 const fs = require('fs');
 const crypto = require('crypto');
+const assert = require('chai').assert;
 
 const FileInfo = require('../lib/FileInfo');
+const { format } = require('path');
 
 // INQUIRER INFORMATION FOR USER PROMPT
 
@@ -17,7 +19,6 @@ const fileList = [];
 // OFF TO THE FILE HANDLER FUNCTION, IF THERE ARE ANY DIRECTORIES
 
 const scanTarget = async (targetPath, subdirFlag) => {
-  // console.log('Target Path: ' + targetPath);
   await fs.readdirSync(targetPath).forEach(async (file, error) => {
     const boolDir = fs.lstatSync(targetPath + file).isDirectory();
     const boolFile = fs.lstatSync(targetPath + file).isFile();
@@ -59,6 +60,35 @@ const handleJpg = (targetPath, file) => {
   fileList.push(newFileInfo);
 };
 
+const testScan = async (targetPath, subdirFlag) => {
+  try {
+    await scanTarget(targetPath, subdirFlag);
+  } finally {
+    return fileList;
+  }
+};
+
+const testWrite = async testFiles => {
+  let csvText = '';
+  try {
+    testFiles.forEach(file => {
+      csvText += file.path + ', ' + file.type + ', ' + file.md5 + '\r\n';
+    });
+  } finally {
+    try {
+      await fs.wrieFile('./test/test.csv', csvText, 'utf8', err => {
+        if (err) {
+          console.log(err);
+        }
+      });
+    } finally {
+      return true;
+    }
+  }
+};
+
 exports.initPrompt = initPrompt;
 exports.scanTarget = scanTarget;
 exports.fileList = fileList;
+exports.testScan = testScan;
+exports.testWrite = testWrite;

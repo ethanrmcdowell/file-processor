@@ -1,5 +1,4 @@
 const inquirer = require('inquirer');
-const crypto = require('crypto');
 const fs = require('fs');
 
 // --------------------------------------------------
@@ -16,11 +15,9 @@ let subdirFlag = false;
 let targetDir = '';
 let outputPath = '';
 let csvText = '';
-let csvCount = 0;
 
 const init = async () => {
   try {
-    console.log(__dirname);
     await userInput();
     await methods.scanTarget(targetDir, subdirFlag);
   } catch (err) {
@@ -28,16 +25,7 @@ const init = async () => {
   } finally {
     try {
       methods.fileList.forEach(file => {
-        csvCount++;
-        csvText +=
-          csvCount +
-          ', ' +
-          file.path +
-          ', ' +
-          file.type +
-          ', ' +
-          file.md5 +
-          '\r\n';
+        csvText += file.path + ', ' + file.type + ', ' + file.md5 + '\r\n';
       });
     } finally {
       fs.writeFile(outputPath, csvText, 'utf8', err => {
@@ -56,10 +44,14 @@ const userInput = async () => {
   await inquirer.prompt(methods.initPrompt).then(async initRes => {
     const userRes = initRes.target;
     const inputArray = userRes.split(' ');
-    targetDir = inputArray[0] + '/';
+    targetDir = inputArray[0];
+    targetLength = targetDir.length;
+    const lastChar = targetDir.charAt(targetLength - 1);
+    if (lastChar !== '/') {
+      targetDir = targetDir + '/';
+    }
     outputPath = inputArray[1];
     if (inputArray[2] === 'r') {
-      console.log('Subdirectory search is turned on!');
       subdirFlag = true;
     }
   });
