@@ -2,24 +2,33 @@
 
 ## Description
 
-- Uses inquirer.js to prompt user for data.
-- Utilizes inquirer 'when' statements to ask role-specific questions defined by user inputs.
-- Validates response to each question involving user input.
-  - Includes functional e-mail validation.
-- Utilizes inquirer.js UI functions to present a header upon starting application.
+- Node.js was used to create this application with JavaScript.
+
+- The application is broken up into the entry point of app.js, the file data model in lib/FileInfo.js, and the methods.js folder which contains important functions used in both app.js and in the testing module.
+
+- Inquirer.js is used to acquire data from the user, as the application requires an input for target directory, the requested output path, and a flag 'r' at the end to signify that you would like the application to scan subfolders.
+
+  - Ex: `/Users/ethanrmcdowell/Projects/Files /Users/ethanrmcdowell/output/output.csv r`
+
+- Utilizes the fs and crypto modules from Node.js in order to read and write as well as to hash the files.
+
+## Installation
+
+- `npm install`
+
+- `node app.js`
 
 ## Testing
 
-`npm test`
+- `npm test`
+
+- Uses Mocha for testing that the program can read files, is receiving the correct data, and is writing a file with that data.
 
 ## Technologies
 
 - Node.js
 - Inquirer.js
-
-## Tests
-
-`npm run test`
+- Mocha / Chai
 
 ## Contact
 
