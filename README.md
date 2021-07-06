@@ -2,7 +2,7 @@
 
 ## Description
 
-- Node.js was used to create this application with JavaScript.
+- Node.js was used to create this application with JavaScript. The goal of this program is to scan a directory for files, detecting any PDF or JPG files. Once those files are detected, it will log the path of the file, the file type, and an MD5 hash of the file into a CSV file.
 
 - The application is broken up into the entry point of app.js, the file data model in lib/FileInfo.js, and the methods.js folder which contains important functions used in both app.js and in the testing module.
 
