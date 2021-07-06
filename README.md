@@ -1,4 +1,4 @@
-# **File Scanner (PDF/JPG)**
+# **File Processor (PDF/JPG)**
 
 ## Description
 
