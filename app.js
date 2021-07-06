@@ -10,6 +10,7 @@ let csvText = '';
 
 const init = async () => {
   try {
+    console.log(__dirname);
     await userInput();
     await methods.scanTarget(targetDir, subdirFlag);
   } catch (err) {
@@ -25,7 +26,6 @@ const init = async () => {
           console.log(err);
         } else {
           console.log('CSV file written to: ' + outputPath);
-          console.log('Output Length:' + methods.fileList.length);
         }
       });
     }

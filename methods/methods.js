@@ -1,22 +1,24 @@
 const fs = require('fs');
 const crypto = require('crypto');
-const assert = require('chai').assert;
 
 const FileInfo = require('../lib/FileInfo');
-const { format } = require('path');
 
-// INQUIRER INFORMATION FOR USER PROMPT
+const validatePrompt = input => {
+  if (input === '' || input.split(' ').length < 2) {
+    return 'Please enter a valid response';
+  } else {
+    return true;
+  }
+};
 
 const initPrompt = {
   type: 'input',
   name: 'target',
   message: 'Enter required information:',
+  validate: validatePrompt,
 };
 
 const fileList = [];
-
-// THIS FUNCTION SCANS EVERYTHING IN THE TARGET DIRECTORY AND SENDS THE FILE
-// OFF TO THE FILE HANDLER FUNCTION, IF THERE ARE ANY DIRECTORIES
 
 const scanTarget = async (targetPath, subdirFlag) => {
   await fs.readdirSync(targetPath).forEach(async (file, error) => {
