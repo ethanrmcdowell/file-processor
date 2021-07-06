@@ -12,11 +12,11 @@
 
 - Utilizes the fs and crypto modules from Node.js in order to read and write as well as to hash the files.
 
+- The entry point to this program is `app.js` - enter `node app.js` to begin!
+
 ## Installation
 
 - `npm install`
-
-- `node app.js`
 
 ## Testing
 
